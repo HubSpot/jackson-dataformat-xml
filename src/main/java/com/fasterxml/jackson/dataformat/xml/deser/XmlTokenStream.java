@@ -19,7 +19,7 @@ import com.fasterxml.jackson.core.JsonLocation;
 public class XmlTokenStream
 {
     // // // main token states:
-    
+
     public final static int XML_START_ELEMENT = 1;
     public final static int XML_END_ELEMENT = 2;
     public final static int XML_ATTRIBUTE_NAME = 3;
@@ -32,7 +32,7 @@ public class XmlTokenStream
     private final static int REPLAY_START_DUP = 1;
     private final static int REPLAY_END = 2;
     private final static int REPLAY_START_DELAYED = 3;
-    
+
     /*
     /**********************************************************************
     /* Configuration
@@ -49,7 +49,7 @@ public class XmlTokenStream
      * are enabled.
      */
     protected int _formatFeatures;
-    
+
     /*
     /**********************************************************************
     /* Parsing state
@@ -79,13 +79,13 @@ public class XmlTokenStream
     protected String _namespaceURI;
 
     protected String _textValue;
-    
+
     /*
     /**********************************************************************
     /* State for handling virtual wrapping
     /**********************************************************************
      */
-    
+
     /**
      * Flag used to indicate that given element should be "replayed".
      */
@@ -103,7 +103,7 @@ public class XmlTokenStream
      */
     protected String _nextLocalName;
     protected String _nextNamespaceURI;
-    
+
     /*
     /**********************************************************************
     /* Life-cycle
@@ -137,7 +137,7 @@ public class XmlTokenStream
     protected void setFormatFeatures(int f) {
         _formatFeatures = f;
     }
-    
+
     /*
     /**********************************************************************
     /* Public API
@@ -146,26 +146,26 @@ public class XmlTokenStream
 
     // DEBUGGING
     /*
-    public int next() throws IOException 
+    public int next() throws IOException
     {
         int n = next0();
         switch (n) {
-        case XML_START_ELEMENT: 
+        case XML_START_ELEMENT:
             System.out.println(" XML-token: XML_START_ELEMENT '"+_localName+"'");
             break;
-        case XML_END_ELEMENT: 
+        case XML_END_ELEMENT:
             System.out.println(" XML-token: XML_END_ELEMENT '"+_localName+"'");
             break;
-        case XML_ATTRIBUTE_NAME: 
+        case XML_ATTRIBUTE_NAME:
             System.out.println(" XML-token: XML_ATTRIBUTE_NAME '"+_localName+"'");
             break;
-        case XML_ATTRIBUTE_VALUE: 
+        case XML_ATTRIBUTE_VALUE:
             System.out.println(" XML-token: XML_ATTRIBUTE_VALUE '"+_textValue+"'");
             break;
-        case XML_TEXT: 
+        case XML_TEXT:
             System.out.println(" XML-token: XML_TEXT '"+_textValue+"'");
             break;
-        case XML_END: 
+        case XML_END:
             System.out.println(" XML-token: XML_END");
             break;
         default:
@@ -175,7 +175,7 @@ public class XmlTokenStream
     }
     */
 
-    public int next() throws XMLStreamException 
+    public int next() throws XMLStreamException
     {
         if (_repeatElement != 0) {
             return (_currentState = _handleRepeatElement());
@@ -199,7 +199,7 @@ public class XmlTokenStream
     public boolean hasAttributes() {
         return (_currentState == XML_START_ELEMENT) && (_attributeCount > 0);
     }
-    
+
     public void closeCompletely() throws XMLStreamException {
         _xmlReader.closeCompletely();
     }
@@ -221,16 +221,16 @@ public class XmlTokenStream
     /* Internal API: more esoteric methods
     /**********************************************************************
      */
-    
+
     /**
      * Method used to add virtual wrapping, which just duplicates START_ELEMENT
      * stream points to, and its matching closing element.
-     * 
+     *
      * @since 2.1
      */
     protected void repeatStartElement()
     {
-//System.out.println(" -> repeatStartElement for "+_localName);        
+//System.out.println(" -> repeatStartElement for "+_localName);
         // sanity check: can only be used when just returned START_ELEMENT:
         if (_currentState != XML_START_ELEMENT) {
             throw new IllegalStateException("Current state not XML_START_ELEMENT ("
@@ -248,7 +248,7 @@ public class XmlTokenStream
     /**
      * Method called to skip any attributes current START_ELEMENT may have,
      * so that they are not returned as token.
-     * 
+     *
      * @since 2.1
      */
     protected void skipAttributes()
@@ -388,17 +388,13 @@ public class XmlTokenStream
                 // 04-May-2018, tatu: We could easily make <tag></tag> ALSO report
                 //    as `null`, by below, but that breaks existing tests so not
                 //    done at least until 3.0.
-                /*
                 if (chars == null) {
                     if (FromXmlParser.Feature.EMPTY_ELEMENT_AS_NULL.enabledIn(_formatFeatures)) {
                         return null;
                     }
                     return "";
                 }
-                return chars;
-                */
-                return (chars == null) ? "" : chars.toString();
-
+                return chars.toString();
             // note: SPACE is ignorable (and seldom seen), not to be included
             case XMLStreamConstants.CHARACTERS:
             case XMLStreamConstants.CDATA:
@@ -455,7 +451,7 @@ public class XmlTokenStream
     /* Internal methods, other
     /**********************************************************************
      */
-    
+
     private final int _initStartElement() throws XMLStreamException
     {
         final String ns = _xmlReader.getNamespaceURI();
@@ -493,7 +489,7 @@ public class XmlTokenStream
      * Method called to handle details of repeating "virtual"
      * start/end elements, needed for handling 'unwrapped' lists.
      */
-    protected int _handleRepeatElement() throws XMLStreamException 
+    protected int _handleRepeatElement() throws XMLStreamException
     {
         int type = _repeatElement;
         _repeatElement = 0;
@@ -520,14 +516,14 @@ public class XmlTokenStream
             _namespaceURI = _nextNamespaceURI;
             _nextLocalName = null;
             _nextNamespaceURI = null;
-            
+
 //System.out.println("handleRepeat for START_DELAYED: "+_localName+" ("+_xmlReader.getLocalName()+")");
 
             return XML_START_ELEMENT;
         }
         throw new IllegalStateException("Unrecognized type to repeat: "+type);
     }
-    
+
     private final int _handleEndElement()
     {
         if (_currentWrapper != null) {
@@ -545,7 +541,7 @@ public class XmlTokenStream
         }
         return (_currentState = XML_END_ELEMENT);
     }
-    
+
     private JsonLocation _extractLocation(XMLStreamLocation2 location)
     {
         if (location == null) { // just for impls that might pass null...

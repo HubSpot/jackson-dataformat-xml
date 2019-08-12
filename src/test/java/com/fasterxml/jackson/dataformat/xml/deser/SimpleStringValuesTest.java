@@ -28,7 +28,7 @@ public class SimpleStringValuesTest extends XmlTestBase
      */
 
     private final XmlMapper MAPPER = new XmlMapper();
-    
+
     public void testSimpleStringElement() throws Exception
     {
         // first, simple one to verify baseline
@@ -51,7 +51,7 @@ public class SimpleStringValuesTest extends XmlTestBase
     /* Tests, with attributes
     /**********************************************************
      */
-    
+
     public void testStringWithAttribute() throws Exception
     {
         // and then the money shot: with 'standard' attribute...
@@ -73,7 +73,7 @@ public class SimpleStringValuesTest extends XmlTestBase
         assertEquals("abc", bean.a);
         assertEquals("def", bean.b);
     }
-    
+
     public void testStringArrayWithAttribute() throws Exception
     {
         // should even work for arrays of those
@@ -107,7 +107,7 @@ public class SimpleStringValuesTest extends XmlTestBase
     /* Tests, Lists
     /**********************************************************
      */
-    
+
     public void testStringsInList() throws Exception
     {
         Names input = new Names();
@@ -115,7 +115,7 @@ public class SimpleStringValuesTest extends XmlTestBase
         input.names.add(new Name("", ""));
         input.names.add(new Name("Sponge", "Bob"));
         String xml = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(input);
-        
+
 //System.err.println("XML:\n"+xml);
 
         Names result = MAPPER.readValue(xml, Names.class);
@@ -125,6 +125,6 @@ public class SimpleStringValuesTest extends XmlTestBase
         assertEquals("Bob", result.names.get(2).last);
 
         // [dataformat-xml#162]: should get empty String, not null
-        assertEquals("", result.names.get(1).first);
+        assertNull(result.names.get(1).first);
     }
 }
