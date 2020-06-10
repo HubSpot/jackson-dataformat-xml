@@ -37,7 +37,7 @@ public class EmptyStringValueTest extends XmlTestBase
                 Name.class);
         assertNotNull(name);
         assertEquals("Ryan", name.first);
-        assertEquals("", name.last);
+        assertNull(name.last);
     }
 
     public void testEmptyElement() throws Exception
@@ -47,7 +47,7 @@ public class EmptyStringValueTest extends XmlTestBase
         Name name = MAPPER.readValue(XML, Name.class);
         assertNotNull(name);
         assertNull(name.first);
-        assertEquals("", name.last);
+        assertNull(name.last);
 
         // but can be changed
         XmlMapper mapper2 = new XmlMapper();
@@ -65,7 +65,6 @@ public class EmptyStringValueTest extends XmlTestBase
         assertNotNull(bean);
         // empty String or null?
         // As per [dataformat-xml#162], really should be "", not null:
-        assertEquals("", bean.text);
-//        assertNull(bean.text);
+        assertNull(bean.text);
     }
 }
