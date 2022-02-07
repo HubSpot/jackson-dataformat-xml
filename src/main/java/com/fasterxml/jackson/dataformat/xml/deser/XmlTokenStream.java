@@ -68,7 +68,7 @@ public class XmlTokenStream
      * are enabled.
      */
     protected int _formatFeatures;
-    
+
     /*
     /**********************************************************************
     /* Parsing state
@@ -123,7 +123,7 @@ public class XmlTokenStream
     /* State for handling virtual wrapping
     /**********************************************************************
      */
-    
+
     /**
      * Flag used to indicate that given element should be "replayed".
      */
@@ -215,7 +215,7 @@ public class XmlTokenStream
     protected void setFormatFeatures(int f) {
         _formatFeatures = f;
     }
-    
+
     /*
     /**********************************************************************
     /* Public API
@@ -224,30 +224,30 @@ public class XmlTokenStream
 
     // DEBUGGING
     /*
-    public int next() throws XMLStreamException 
+    public int next() throws XMLStreamException
     {
         int n = next0();
         switch (n) {
-        case XML_START_ELEMENT: 
+        case XML_START_ELEMENT:
             System.out.printf(" XmlTokenStream.next(): XML_START_ELEMENT '%s' %s\n", _localName, _loc());
             break;
-        case XML_DELAYED_START_ELEMENT: 
+        case XML_DELAYED_START_ELEMENT:
             System.out.printf(" XmlTokenStream.next(): XML_DELAYED_START_ELEMENT '%s' %s\n", _localName, _loc());
             break;
-        case XML_END_ELEMENT: 
+        case XML_END_ELEMENT:
             // 24-May-2020, tatu: no name available for end element so do not print
             System.out.printf(" XmlTokenStream.next(): XML_END_ELEMENT %s\n", _loc());
             break;
-        case XML_ATTRIBUTE_NAME: 
+        case XML_ATTRIBUTE_NAME:
             System.out.printf(" XmlTokenStream.next(): XML_ATTRIBUTE_NAME '%s' %s\n", _localName, _loc());
             break;
-        case XML_ATTRIBUTE_VALUE: 
+        case XML_ATTRIBUTE_VALUE:
             System.out.printf(" XmlTokenStream.next(): XML_ATTRIBUTE_VALUE '%s' %s\n", _textValue, _loc());
             break;
-        case XML_TEXT: 
+        case XML_TEXT:
             System.out.printf(" XmlTokenStream.next(): XML_TEXT '%s' %s\n", _textValue, _loc());
             break;
-        case XML_END: 
+        case XML_END:
             System.out.printf(" XmlTokenStream.next(): XML_END %s\n", _loc());
             break;
         default:
@@ -330,7 +330,7 @@ public class XmlTokenStream
     /* Internal API: more esoteric methods
     /**********************************************************************
      */
-    
+
     /**
      * Method used to add virtual wrapping, which just duplicates START_ELEMENT
      * stream points to, and its matching closing element.
@@ -371,7 +371,7 @@ public class XmlTokenStream
     /**
      * Method called to skip any attributes current START_ELEMENT may have,
      * so that they are not returned as token.
-     * 
+     *
      * @since 2.1
      */
     protected void skipAttributes()
@@ -447,7 +447,7 @@ public class XmlTokenStream
                 }
                 _startElementAfterText = true;
                 _textValue = text;
-                
+
                 return (_currentState = XML_TEXT);
             }
             // For END_ELEMENT we will return text, if any
@@ -534,8 +534,13 @@ public class XmlTokenStream
 
             case XMLStreamConstants.END_ELEMENT:
             case XMLStreamConstants.END_DOCUMENT:
-                return (chars == null) ? "" : chars.toString();
-
+                if (chars != null) {
+                    return chars.toString();
+                } else if (FromXmlParser.Feature.EMPTY_ELEMENT_AS_NULL.enabledIn(_formatFeatures)) {
+                    return null;
+                } else {
+                    return "";
+                }
             // note: SPACE is ignorable (and seldom seen), not to be included
             case XMLStreamConstants.CHARACTERS:
             case XMLStreamConstants.CDATA:
@@ -694,7 +699,7 @@ public class XmlTokenStream
      * Method called to handle details of repeating "virtual"
      * start/end elements, needed for handling 'unwrapped' lists.
      */
-    protected int _handleRepeatElement() throws XMLStreamException 
+    protected int _handleRepeatElement() throws XMLStreamException
     {
 //System.out.println(" XMLTokenStream._handleRepeatElement()");
 
@@ -730,7 +735,7 @@ public class XmlTokenStream
         }
         throw new IllegalStateException("Unrecognized type to repeat: "+type);
     }
-    
+
     private final int _handleEndElement()
     {
 //System.out.println(" XMLTokenStream._handleEndElement()");
