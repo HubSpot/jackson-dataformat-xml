@@ -1,17 +1,17 @@
 package com.fasterxml.jackson.dataformat.xml.deser;
 
-import java.io.IOException;
-
-import javax.xml.XMLConstants;
-import javax.xml.stream.*;
-
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.core.io.ContentReference;
 import com.fasterxml.jackson.dataformat.xml.XmlNameProcessor;
 import org.codehaus.stax2.XMLStreamLocation2;
 import org.codehaus.stax2.XMLStreamReader2;
 import org.codehaus.stax2.ri.Stax2ReaderAdapter;
 
-import com.fasterxml.jackson.core.JsonLocation;
-import com.fasterxml.jackson.core.io.ContentReference;
+import javax.xml.XMLConstants;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
 
 /**
  * Simple helper class used on top of STAX {@link XMLStreamReader} to further
@@ -564,7 +564,13 @@ public class XmlTokenStream
 
             case XMLStreamConstants.END_ELEMENT:
             case XMLStreamConstants.END_DOCUMENT:
-                return (chars == null) ? "" : chars.toString();
+                if (chars != null) {
+                    return chars.toString();
+                } else if (FromXmlParser.Feature.EMPTY_ELEMENT_AS_NULL.enabledIn(_formatFeatures)) {
+                    return null;
+                } else {
+                    return "";
+                }
 
             // note: SPACE is ignorable (and seldom seen), not to be included
             case XMLStreamConstants.CHARACTERS:

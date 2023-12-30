@@ -1,13 +1,13 @@
 package com.fasterxml.jackson.dataformat.xml.deser;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlTestBase;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmptyStringValueTest extends XmlTestBase
 {
@@ -82,7 +82,7 @@ public class EmptyStringValueTest extends XmlTestBase
         name = mapper2.readValue(XML, Name.class);
         assertNotNull(name);
         assertNull(name.first);
-        assertEquals("", name.last);
+        assertNull(name.last);
     }
 
     public void testEmptyStringElement() throws Exception
