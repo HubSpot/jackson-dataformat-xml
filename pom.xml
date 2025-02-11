@@ -5,15 +5,15 @@
   <!-- is to indicate to Gradle or any Gradle module metadata file consumer  -->
   <!-- that they should prefer consuming it instead. -->
   <!-- do_not_remove: published-with-gradle-metadata -->
-  <modelVersion>4.0.0</modelVersion> 
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.fasterxml.jackson</groupId>
     <artifactId>jackson-base</artifactId>
-    <version>2.18.4-SNAPSHOT</version>
+    <version>2.18.3</version>
   </parent>
   <groupId>com.fasterxml.jackson.dataformat</groupId>
   <artifactId>jackson-dataformat-xml</artifactId>
-  <version>2.18.4-SNAPSHOT</version>
+  <version>2.18.3-hubspot-SNAPSHOT</version>
   <name>Jackson-dataformat-XML</name>
   <packaging>jar</packaging>
   <description>Data format extension for Jackson to offer
@@ -23,7 +23,7 @@ alternative support for serializing POJOs as XML and deserializing XML as pojos.
   <scm>
     <connection>scm:git:git@github.com:FasterXML/jackson-dataformat-xml.git</connection>
     <developerConnection>scm:git:git@github.com:FasterXML/jackson-dataformat-xml.git</developerConnection>
-    <url>http://github.com/FasterXML/jackson-dataformat-xml</url>    
+    <url>http://github.com/FasterXML/jackson-dataformat-xml</url>
     <tag>HEAD</tag>
   </scm>
   <properties>
@@ -76,9 +76,9 @@ alternative support for serializing POJOs as XML and deserializing XML as pojos.
 	  <groupId>javax.xml.stream</groupId>
 	  <artifactId>stax-api</artifactId>
         </exclusion>
-      </exclusions> 
+      </exclusions>
     </dependency>
-    <!--  and a Stax impl is needed: SJSXP (from JDK 1.6) might work, but always   
+    <!--  and a Stax impl is needed: SJSXP (from JDK 1.6) might work, but always
           has odd issues. Let's default to Woodstox: caller can upgrade to Aalto
          (needs to block this dep)
       -->
@@ -98,7 +98,7 @@ alternative support for serializing POJOs as XML and deserializing XML as pojos.
 	  <groupId>javax.xml.stream</groupId>
 	  <artifactId>stax-api</artifactId>
         </exclusion>
-      </exclusions> 
+      </exclusions>
     </dependency>
 
     <!-- 20-Apr-2024, tatu: JUnit4 no longer from jackson-base, so: -->
@@ -138,6 +138,29 @@ alternative support for serializing POJOs as XML and deserializing XML as pojos.
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>injected-nexus-deploy</id>
+              <phase>never</phase>
+              <goals>
+                <goal>deploy</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.8.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
 	<groupId>org.jacoco</groupId>
