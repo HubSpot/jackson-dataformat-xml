@@ -5,15 +5,15 @@
   <!-- is to indicate to Gradle or any Gradle module metadata file consumer  -->
   <!-- that they should prefer consuming it instead. -->
   <!-- do_not_remove: published-with-gradle-metadata -->
-  <modelVersion>4.0.0</modelVersion> 
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.fasterxml.jackson</groupId>
     <artifactId>jackson-base</artifactId>
-    <version>2.18.2</version>
+    <version>2.18.3</version>
   </parent>
   <groupId>com.fasterxml.jackson.dataformat</groupId>
   <artifactId>jackson-dataformat-xml</artifactId>
-  <version>2.18.2-hubspot-SNAPSHOT</version>
+  <version>2.18.3-hubspot-SNAPSHOT</version>
   <name>Jackson-dataformat-XML</name>
   <packaging>jar</packaging>
   <description>Data format extension for Jackson to offer
@@ -23,8 +23,8 @@ alternative support for serializing POJOs as XML and deserializing XML as pojos.
   <scm>
     <connection>scm:git:git@github.com:FasterXML/jackson-dataformat-xml.git</connection>
     <developerConnection>scm:git:git@github.com:FasterXML/jackson-dataformat-xml.git</developerConnection>
-    <url>http://github.com/FasterXML/jackson-dataformat-xml</url>    
-    <tag>jackson-dataformat-xml-2.18.2</tag>
+    <url>http://github.com/FasterXML/jackson-dataformat-xml</url>
+    <tag>jackson-dataformat-xml-2.18.3</tag>
   </scm>
   <properties>
     <packageVersion.dir>com/fasterxml/jackson/dataformat/xml</packageVersion.dir>
@@ -76,9 +76,9 @@ alternative support for serializing POJOs as XML and deserializing XML as pojos.
 	  <groupId>javax.xml.stream</groupId>
 	  <artifactId>stax-api</artifactId>
         </exclusion>
-      </exclusions> 
+      </exclusions>
     </dependency>
-    <!--  and a Stax impl is needed: SJSXP (from JDK 1.6) might work, but always   
+    <!--  and a Stax impl is needed: SJSXP (from JDK 1.6) might work, but always
           has odd issues. Let's default to Woodstox: caller can upgrade to Aalto
          (needs to block this dep)
       -->
@@ -98,7 +98,7 @@ alternative support for serializing POJOs as XML and deserializing XML as pojos.
 	  <groupId>javax.xml.stream</groupId>
 	  <artifactId>stax-api</artifactId>
         </exclusion>
-      </exclusions> 
+      </exclusions>
     </dependency>
 
     <!-- 20-Apr-2024, tatu: JUnit4 no longer from jackson-base, so: -->
