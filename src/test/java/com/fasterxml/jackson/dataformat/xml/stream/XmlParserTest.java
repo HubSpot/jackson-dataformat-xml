@@ -1,16 +1,20 @@
 package com.fasterxml.jackson.dataformat.xml.stream;
 
-import java.io.*;
-
-import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonParser.NumberType;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlTestBase;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 public class XmlParserTest extends XmlTestBase
 {
@@ -73,6 +77,44 @@ public class XmlParserTest extends XmlTestBase
             assertEquals("leaf", p.currentName());
             assertToken(JsonToken.VALUE_STRING, p.nextToken());
             assertEquals("", p.getText());
+            assertToken(JsonToken.END_OBJECT, p.nextToken());
+            assertNull(p.nextToken());
+        }
+    }
+
+    public void testXmlWithOnlyWhitespace()  throws Exception {
+        final String XML = "<root><leaf name=\"name_1\"> </leaf></root>";
+
+        try (JsonParser p = _xmlMapper.configure(FromXmlParser.Feature.SKIP_EMPTY_WHITESPACE_IN_ELEMENT_WITH_ATTRIBUTE, false)
+                .reader().createParser(XML)) {
+            assertToken(JsonToken.START_OBJECT, p.nextToken());
+            assertToken(JsonToken.FIELD_NAME, p.nextToken());
+            assertEquals("leaf", p.currentName());
+            assertToken(JsonToken.START_OBJECT, p.nextToken());
+            assertToken(JsonToken.FIELD_NAME, p.nextToken());
+            assertEquals("name", p.getText());
+            assertToken(JsonToken.VALUE_STRING, p.nextToken());
+            assertEquals("name_1", p.getText());
+            assertToken(JsonToken.FIELD_NAME, p.nextToken());
+            assertEquals("", p.getText());
+            assertToken(JsonToken.VALUE_STRING, p.nextToken());
+            assertEquals(" ", p.getText());
+            assertToken(JsonToken.END_OBJECT, p.nextToken());
+            assertToken(JsonToken.END_OBJECT, p.nextToken());
+            assertNull(p.nextToken());
+        }
+
+        try (JsonParser p = _xmlMapper.configure(FromXmlParser.Feature.SKIP_EMPTY_WHITESPACE_IN_ELEMENT_WITH_ATTRIBUTE, true)
+                .reader().createParser(XML)) {
+            assertToken(JsonToken.START_OBJECT, p.nextToken());
+            assertToken(JsonToken.FIELD_NAME, p.nextToken());
+            assertEquals("leaf", p.currentName());
+            assertToken(JsonToken.START_OBJECT, p.nextToken());
+            assertToken(JsonToken.FIELD_NAME, p.nextToken());
+            assertEquals("name", p.getText());
+            assertToken(JsonToken.VALUE_STRING, p.nextToken());
+            assertEquals("name_1", p.getText());
+            assertToken(JsonToken.END_OBJECT, p.nextToken());
             assertToken(JsonToken.END_OBJECT, p.nextToken());
             assertNull(p.nextToken());
         }

@@ -1,18 +1,17 @@
 package com.fasterxml.jackson.dataformat.xml.deser;
 
-import java.io.IOException;
-
-import javax.xml.XMLConstants;
-import javax.xml.stream.*;
-
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.core.io.ContentReference;
+import com.fasterxml.jackson.dataformat.xml.XmlNameProcessor;
+import com.fasterxml.jackson.dataformat.xml.util.Stax2JacksonReaderAdapter;
 import org.codehaus.stax2.XMLStreamLocation2;
 import org.codehaus.stax2.XMLStreamReader2;
 
-import com.fasterxml.jackson.core.JsonLocation;
-import com.fasterxml.jackson.core.io.ContentReference;
-
-import com.fasterxml.jackson.dataformat.xml.XmlNameProcessor;
-import com.fasterxml.jackson.dataformat.xml.util.Stax2JacksonReaderAdapter;
+import javax.xml.XMLConstants;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
 
 /**
  * Simple helper class used on top of STAX {@link XMLStreamReader} to further
@@ -77,6 +76,8 @@ public class XmlTokenStream
 
     // @since 2.17
     protected boolean _cfgProcessXsiType;
+
+    protected boolean _cfgSkipEmptyWhitespace;
 
     protected XmlNameProcessor _nameProcessor;
 
@@ -173,6 +174,7 @@ public class XmlTokenStream
         _formatFeatures = formatFeatures;
         _cfgProcessXsiNil = FromXmlParser.Feature.PROCESS_XSI_NIL.enabledIn(_formatFeatures);
         _cfgProcessXsiType = FromXmlParser.Feature.AUTO_DETECT_XSI_TYPE.enabledIn(_formatFeatures);
+        _cfgSkipEmptyWhitespace = FromXmlParser.Feature.SKIP_EMPTY_WHITESPACE_IN_ELEMENT_WITH_ATTRIBUTE.enabledIn(_formatFeatures);
         // 04-Dec-2023, tatu: [dataformat-xml#618] Need further customized adapter:
         _xmlReader = Stax2JacksonReaderAdapter.wrapIfNecessary(xmlReader);
         _nameProcessor = nameProcessor;

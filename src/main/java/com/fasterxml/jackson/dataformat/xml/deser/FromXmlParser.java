@@ -1,17 +1,5 @@
 package com.fasterxml.jackson.dataformat.xml.deser;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.io.Writer;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Set;
-
-import javax.xml.XMLConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.base.ParserMinimalBase;
 import com.fasterxml.jackson.core.exc.StreamConstraintsException;
@@ -19,12 +7,22 @@ import com.fasterxml.jackson.core.io.IOContext;
 import com.fasterxml.jackson.core.io.NumberInput;
 import com.fasterxml.jackson.core.util.ByteArrayBuilder;
 import com.fasterxml.jackson.core.util.JacksonFeatureSet;
-
 import com.fasterxml.jackson.dataformat.xml.PackageVersion;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlNameProcessor;
 import com.fasterxml.jackson.dataformat.xml.util.CaseInsensitiveNameSet;
 import com.fasterxml.jackson.dataformat.xml.util.StaxUtil;
+
+import javax.xml.XMLConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.io.Writer;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Set;
 
 /**
  * {@link JsonParser} implementation that exposes XML structure as
@@ -100,6 +98,8 @@ public class FromXmlParser
          * @since 2.13
          */
         PROCESS_XSI_NIL(true),
+
+        SKIP_EMPTY_WHITESPACE_IN_ELEMENT_WITH_ATTRIBUTE(true),
 
         // 16-Nov-2020, tatu: would have been nice to add in 2.12 but is not
         //    trivial to implement... so leaving out for now
@@ -864,9 +864,34 @@ XmlTokenStream.XML_END_ELEMENT, XmlTokenStream.XML_START_ELEMENT, token));
                         _nextIsLeadingMixed = true;
                         _nextToken = JsonToken.FIELD_NAME;
                         return _updateToken(JsonToken.START_OBJECT);
-                    } else if (XmlTokenStream._allWs(_currText)) {
-                        token = _nextToken();
-                        continue;
+                    } else {
+                        int nextToken = _nextToken();
+                        _xmlTokens.pushbackCurrentToken();
+
+                        if (_xmlTokens._cfgSkipEmptyWhitespace && XmlTokenStream._allWs(_currText)) {
+                            token = _nextToken();
+                            continue;
+                        } else if (!_xmlTokens._cfgSkipEmptyWhitespace) {
+                            /*
+                            This is needed because when we're reading the end of xml block like:
+                                <a field="field"/>
+
+                            The XML parser will return tokens equivalent to xml block:
+                                <a field="field"></a>
+
+                            which means we will get an empty VALUE_STRING followed by an XML_END_ELEMENT.
+
+                            TODO: Figure out if behavior is correct with EMPTY_ELEMENT_AS_NULL set to true
+                         */
+                            if ("".equals(_currText)) {
+                                token = _nextToken();
+                                continue;
+                            } else if (XmlTokenStream._allWs(_currText) && nextToken != XmlTokenStream.XML_END_ELEMENT) {
+                                token = _nextToken();
+                                continue;
+                            }
+                        }
+
                     }
                 } else if (_parsingContext.inArray()) {
                     // [dataformat-xml#319] Aaaaand for Arrays too
