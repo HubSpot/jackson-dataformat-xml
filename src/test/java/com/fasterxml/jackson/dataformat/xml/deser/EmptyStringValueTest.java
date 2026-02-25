@@ -51,7 +51,7 @@ public class EmptyStringValueTest extends XmlTestUtil
 
         public Product427(@JsonProperty("stuff") Stuff427 s) { stuff = s; }
     }
-    
+
     /*
     /**********************************************************************
     /* Test methods
@@ -88,7 +88,7 @@ public class EmptyStringValueTest extends XmlTestUtil
         name = mapper2.readValue(XML, Name.class);
         assertNotNull(name);
         assertNull(name.first);
-        assertEquals("", name.last);
+        assertNull(name.last);
     }
 
     @Test

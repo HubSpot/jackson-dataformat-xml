@@ -1,0 +1,6 @@
+buildpack:
+  name: Blazar-Buildpack-Java-oss-fork
+
+env:
+  SKIP_VERSION_OVERRIDE_ON_BRANCH: 2.21.1-hubspot
+
